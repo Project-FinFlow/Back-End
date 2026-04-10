@@ -1,9 +1,23 @@
-package com.finflow.finflow.dto;
+package com.finflow.finflow.model;
 
-public class MetaRequest {
+import jakarta.persistence.*;
+
+@Entity
+public class Meta {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String descricao;
+
     private Double valorObjetivo;
+
+    // GETTERS E SETTERS
+
+    public Long getId() {
+        return id;
+    }
 
     public String getDescricao() {
         return descricao;
@@ -11,6 +25,10 @@ public class MetaRequest {
 
     public Double getValorObjetivo() {
         return valorObjetivo;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setDescricao(String descricao) {

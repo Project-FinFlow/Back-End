@@ -1,14 +1,36 @@
 package com.finflow.finflow.dto;
 
-import lombok.Data;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-@Data
 public class MetaResponse {
+
     private Long id;
-    private String nome;
-    private BigDecimal valorObjetivo;
-    private BigDecimal valorAtual;
-    private LocalDate prazo;
+    private String descricao;
+    private Double valorObjetivo;
+
+    // GETTERS
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public Double getValorObjetivo() {
+        return valorObjetivo;
+    }
+
+    // SETTERS
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setValorObjetivo(Double valorObjetivo) {
+        this.valorObjetivo = valorObjetivo;
+    }
 }
