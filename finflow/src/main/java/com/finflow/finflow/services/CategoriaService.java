@@ -42,7 +42,7 @@ public class CategoriaService {
 
         categoria.setNome(request.getNome());
 
-        // 🔥 CORREÇÃO DO ENUM
+        
         categoria.setTipo(
             TipoCategoria.valueOf(request.getTipo().toUpperCase())
         );
