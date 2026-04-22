@@ -9,7 +9,7 @@ RF01 – Cadastro de Usuário
 
 RF02 – Login e Autenticação
 
-- Implementação: (não identificado claramente no projeto)
+- Implementação: Parcialmente feito em UsuarioService
 - Descrição: Permite autenticação do usuário
 
 ---
