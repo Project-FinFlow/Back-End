@@ -10,6 +10,10 @@ import com.finflow.finflow.model.Usuario;
 import com.finflow.finflow.repository.UsuarioRepository;
 import com.finflow.finflow.mapper.UsuarioMapper;
 
+/**
+ * RF01 – Cadastro de Usuário
+ * RF02 – Login (parcial)
+ */
 @Service
 public class UsuarioService {
 
@@ -19,11 +23,17 @@ public class UsuarioService {
         this.repository = repository;
     }
 
+    /**
+     * RF01 – Criar usuário
+     */
     public UsuarioResponse criar(UsuarioRequest request) {
         Usuario user = UsuarioMapper.toEntity(request);
         return UsuarioMapper.toResponse(repository.save(user));
     }
 
+    /**
+     * RF01 – Listar usuários
+     */
     public List<UsuarioResponse> listar() {
         return repository.findAll()
                 .stream()
@@ -31,12 +41,33 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * RF01 – Buscar usuário por ID
+     */
     public UsuarioResponse buscarPorId(Long id) {
         Usuario user = repository.findById(id).orElseThrow();
         return UsuarioMapper.toResponse(user);
     }
 
+    /**
+     * RF01 – Deletar usuário
+     */
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    /**
+     * RF02 – Login de usuário (implementação simples)
+     * 
+     * Valida email e senha informados.
+     */
+    public UsuarioResponse login(String email, String senha) {
+        Usuario user = repository.findByEmail(email);
+
+        if (user != null && user.getSenha().equals(senha)) {
+            return UsuarioMapper.toResponse(user);
+        }
+
+        throw new RuntimeException("Credenciais inválidas");
     }
 }
