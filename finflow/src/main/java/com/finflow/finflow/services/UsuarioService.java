@@ -14,17 +14,25 @@ import com.finflow.finflow.mapper.UsuarioMapper;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final LogSistemaService logService;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioService(UsuarioRepository repository, LogSistemaService logService) {
         this.repository = repository;
+        this.logService = logService;
     }
 
     public UsuarioResponse criar(UsuarioRequest request) {
         Usuario user = UsuarioMapper.toEntity(request);
-        return UsuarioMapper.toResponse(repository.save(user));
+        Usuario salvo = repository.save(user);
+
+        logService.registrar("USUARIO CRIADO");
+
+        return UsuarioMapper.toResponse(salvo);
     }
 
     public List<UsuarioResponse> listar() {
+        logService.registrar("USUARIO LISTADO");
+
         return repository.findAll()
                 .stream()
                 .map(UsuarioMapper::toResponse)
@@ -33,10 +41,15 @@ public class UsuarioService {
 
     public UsuarioResponse buscarPorId(Long id) {
         Usuario user = repository.findById(id).orElseThrow();
+
+        logService.registrar("USUARIO BUSCADO ID " + id);
+
         return UsuarioMapper.toResponse(user);
     }
 
     public void deletar(Long id) {
         repository.deleteById(id);
+
+        logService.registrar("USUARIO DELETADO ID " + id);
     }
 }

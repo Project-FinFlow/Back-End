@@ -14,17 +14,25 @@ import com.finflow.finflow.mapper.ReceitaMapper;
 public class ReceitaService {
 
     private final ReceitaRepository repository;
+    private final LogSistemaService logService;
 
-    public ReceitaService(ReceitaRepository repository) {
+    public ReceitaService(ReceitaRepository repository, LogSistemaService logService) {
         this.repository = repository;
+        this.logService = logService;
     }
 
     public ReceitaResponse criar(ReceitaRequest request) {
         Receita receita = ReceitaMapper.toEntity(request);
-        return ReceitaMapper.toResponse(repository.save(receita));
+        Receita salvo = repository.save(receita);
+
+        logService.registrar("RECEITA CRIADA");
+
+        return ReceitaMapper.toResponse(salvo);
     }
 
     public List<ReceitaResponse> listar() {
+        logService.registrar("RECEITA LISTADA");
+
         return repository.findAll()
                 .stream()
                 .map(ReceitaMapper::toResponse)
@@ -33,6 +41,9 @@ public class ReceitaService {
 
     public ReceitaResponse buscarPorId(Long id) {
         Receita receita = repository.findById(id).orElseThrow();
+
+        logService.registrar("RECEITA BUSCADA ID " + id);
+
         return ReceitaMapper.toResponse(receita);
     }
 
@@ -43,10 +54,16 @@ public class ReceitaService {
         receita.setValor(request.getValor());
         receita.setData(request.getData());
 
-        return ReceitaMapper.toResponse(repository.save(receita));
+        Receita atualizado = repository.save(receita);
+
+        logService.registrar("RECEITA ATUALIZADA ID " + id);
+
+        return ReceitaMapper.toResponse(atualizado);
     }
 
     public void deletar(Long id) {
         repository.deleteById(id);
+
+        logService.registrar("RECEITA DELETADA ID " + id);
     }
 }
