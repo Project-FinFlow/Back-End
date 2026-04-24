@@ -19,23 +19,23 @@ public class DespesaService {
         this.repository = repository;
     }
 
-   public DespesaResponse criar(DespesaRequest request) {
+    public DespesaResponse criar(DespesaRequest request) {
 
-    if (request.getDescricao() == null || request.getDescricao().isBlank()) {
-        throw new RuntimeException("Descrição é obrigatória");
+        if (request.getDescricao() == null || request.getDescricao().isBlank()) {
+            throw new RuntimeException("Descrição é obrigatória");
+        }
+
+        if (request.getValor() == null) {
+            throw new RuntimeException("Valor é obrigatório");
+        }
+
+        if (request.getData() == null) {
+            throw new RuntimeException("Data é obrigatória");
+        }
+
+        Despesa despesa = DespesaMapper.toEntity(request);
+        return DespesaMapper.toResponse(repository.save(despesa));
     }
-
-    if (request.getValor() == null) {
-        throw new RuntimeException("Valor é obrigatório");
-    }
-
-    if (request.getData() == null) {
-        throw new RuntimeException("Data é obrigatória");
-    }
-
-    Despesa despesa = DespesaMapper.toEntity(request);
-    return DespesaMapper.toResponse(repository.save(despesa));
-}
 
     public List<DespesaResponse> listar() {
         return repository.findAll()
@@ -51,26 +51,26 @@ public class DespesaService {
 
     public DespesaResponse atualizar(Long id, DespesaRequest request) {
 
-    Despesa despesa = repository.findById(id).orElseThrow();
+        Despesa despesa = repository.findById(id).orElseThrow();
 
-    if (request.getDescricao() == null || request.getDescricao().isBlank()) {
-        throw new RuntimeException("Descrição é obrigatória");
+        if (request.getDescricao() == null || request.getDescricao().isBlank()) {
+            throw new RuntimeException("Descrição é obrigatória");
+        }
+
+        if (request.getValor() == null) {
+            throw new RuntimeException("Valor é obrigatório");
+        }
+
+        if (request.getData() == null) {
+            throw new RuntimeException("Data é obrigatória");
+        }
+
+        despesa.setDescricao(request.getDescricao());
+        despesa.setValor(request.getValor());
+        despesa.setData(request.getData());
+
+        return DespesaMapper.toResponse(repository.save(despesa));
     }
-
-    if (request.getValor() == null) {
-        throw new RuntimeException("Valor é obrigatório");
-    }
-
-    if (request.getData() == null) {
-        throw new RuntimeException("Data é obrigatória");
-    }
-
-    despesa.setDescricao(request.getDescricao());
-    despesa.setValor(request.getValor());
-    despesa.setData(request.getData());
-
-    return DespesaMapper.toResponse(repository.save(despesa));
-}
 
     public void deletar(Long id) {
         repository.deleteById(id);
