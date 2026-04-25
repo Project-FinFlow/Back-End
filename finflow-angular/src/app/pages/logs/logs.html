@@ -1,0 +1,58 @@
+<section class="module-page">
+  <span class="module-page__eyebrow">Auditoria</span>
+  <h2>Logs</h2>
+  <p>
+    Os registros de auditoria retornados pela API aparecem aqui para acompanhar
+    acoes feitas no sistema.
+  </p>
+
+  <div class="page-actions">
+    <button class="action-button" type="button" (click)="recarregar()">
+      Atualizar dados
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Registros encontrados</span>
+      <strong>{{ logs().length }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Tabelas afetadas</span>
+      <strong>{{ logs().length ? 'Ativas' : 'Nenhuma' }}</strong>
+    </article>
+  </div>
+
+  @if (carregando()) {
+    <div class="status-card">Carregando logs da API...</div>
+  } @else if (erro()) {
+    <div class="status-card status-card--error">{{ erro() }}</div>
+  } @else if (!logs().length) {
+    <div class="status-card">Nenhum log foi registrado ainda.</div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Data e hora</th>
+            <th>Acao</th>
+            <th>Tabela</th>
+            <th>Registro</th>
+            <th>Descricao</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of logs(); track item.id) {
+            <tr>
+              <td>{{ formatDateTime(item.dataHora) }}</td>
+              <td><span class="badge">{{ item.acao }}</span></td>
+              <td>{{ item.tabela }}</td>
+              <td>#{{ item.registroId }}</td>
+              <td>{{ item.descricao }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

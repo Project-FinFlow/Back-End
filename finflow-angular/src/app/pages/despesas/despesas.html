@@ -1,0 +1,58 @@
+<section class="module-page">
+  <span class="module-page__eyebrow">Movimentacoes</span>
+  <h2>Despesas</h2>
+  <p>
+    Visualize os registros enviados pela API e clique em atualizar sempre que
+    fizer um novo POST pelo Postman.
+  </p>
+
+  <div class="page-actions">
+    <button class="action-button" type="button" (click)="recarregar()">
+      Atualizar dados
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Registros encontrados</span>
+      <strong>{{ despesas().length }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Total em despesas</span>
+      <strong>{{ formatCurrency(total()) }}</strong>
+    </article>
+  </div>
+
+  @if (carregando()) {
+    <div class="status-card">Carregando despesas da API...</div>
+  } @else if (erro()) {
+    <div class="status-card status-card--error">{{ erro() }}</div>
+  } @else if (!despesas().length) {
+    <div class="status-card">Nenhuma despesa foi cadastrada ainda.</div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Descricao</th>
+            <th>Data</th>
+            <th class="data-table__number">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of despesas(); track item.id) {
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td>{{ item.descricao }}</td>
+              <td>{{ formatDate(item.data) }}</td>
+              <td class="data-table__number">
+                {{ formatCurrency(item.valor) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -1,0 +1,56 @@
+<section class="module-page">
+  <span class="module-page__eyebrow">Planejamento</span>
+  <h2>Metas</h2>
+  <p>
+    Esta aba mostra as metas salvas no backend para que voce acompanhe o valor
+    objetivo de cada planejamento.
+  </p>
+
+  <div class="page-actions">
+    <button class="action-button" type="button" (click)="recarregar()">
+      Atualizar dados
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Registros encontrados</span>
+      <strong>{{ metas().length }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Total planejado</span>
+      <strong>{{ formatCurrency(valorPlanejado()) }}</strong>
+    </article>
+  </div>
+
+  @if (carregando()) {
+    <div class="status-card">Carregando metas da API...</div>
+  } @else if (erro()) {
+    <div class="status-card status-card--error">{{ erro() }}</div>
+  } @else if (!metas().length) {
+    <div class="status-card">Nenhuma meta foi cadastrada ainda.</div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Descricao</th>
+            <th class="data-table__number">Valor objetivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of metas(); track item.id) {
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td>{{ item.descricao }}</td>
+              <td class="data-table__number">
+                {{ formatCurrency(item.valorObjetivo) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

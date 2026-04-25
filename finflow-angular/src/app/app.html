@@ -1,0 +1,42 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <p class="brand__eyebrow">Painel financeiro</p>
+      <h1>{{ title }}</h1>
+      <p class="brand__copy">
+        Navegue pelas areas principais do sistema e acompanhe seu fluxo
+        financeiro com mais clareza.
+      </p>
+    </div>
+
+    <nav class="nav" aria-label="Navegacao principal do FinFlow">
+      @for (item of navigation; track item.path) {
+        <a
+          class="nav__link"
+          [routerLink]="item.path"
+          routerLinkActive="nav__link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span>{{ item.label }}</span>
+          <small>{{ item.description }}</small>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="content">
+    <section class="hero">
+      <span class="hero__badge">Financas em movimento</span>
+      <h2>Escolha uma aba para continuar.</h2>
+      <p>
+        A navegacao fica sempre visivel para voce alternar entre despesas,
+        receitas, categorias, metas, usuarios e logs sem sair da tela
+        principal.
+      </p>
+    </section>
+
+    <section class="view">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

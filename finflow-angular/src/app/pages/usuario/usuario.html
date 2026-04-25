@@ -1,0 +1,56 @@
+<section class="module-page">
+  <span class="module-page__eyebrow">Acesso</span>
+  <h2>Usuarios</h2>
+  <p>
+    Veja os usuarios cadastrados pela API. Por seguranca, a tela nao exibe a
+    senha em texto aberto.
+  </p>
+
+  <div class="page-actions">
+    <button class="action-button" type="button" (click)="recarregar()">
+      Atualizar dados
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Registros encontrados</span>
+      <strong>{{ usuarios().length }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Emails cadastrados</span>
+      <strong>{{ usuarios().length }}</strong>
+    </article>
+  </div>
+
+  @if (carregando()) {
+    <div class="status-card">Carregando usuarios da API...</div>
+  } @else if (erro()) {
+    <div class="status-card status-card--error">{{ erro() }}</div>
+  } @else if (!usuarios().length) {
+    <div class="status-card">Nenhum usuario foi cadastrado ainda.</div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Senha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of usuarios(); track item.id) {
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td>{{ item.nome }}</td>
+              <td>{{ item.email }}</td>
+              <td><span class="badge">Oculta</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

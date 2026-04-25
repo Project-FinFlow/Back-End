@@ -1,0 +1,58 @@
+<section class="module-page">
+  <span class="module-page__eyebrow">Entradas</span>
+  <h2>Receitas</h2>
+  <p>
+    Aqui aparecem as receitas cadastradas pela sua API, inclusive as que voce
+    criou via Postman.
+  </p>
+
+  <div class="page-actions">
+    <button class="action-button" type="button" (click)="recarregar()">
+      Atualizar dados
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Registros encontrados</span>
+      <strong>{{ receitas().length }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Total em receitas</span>
+      <strong>{{ formatCurrency(total()) }}</strong>
+    </article>
+  </div>
+
+  @if (carregando()) {
+    <div class="status-card">Carregando receitas da API...</div>
+  } @else if (erro()) {
+    <div class="status-card status-card--error">{{ erro() }}</div>
+  } @else if (!receitas().length) {
+    <div class="status-card">Nenhuma receita foi cadastrada ainda.</div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Descricao</th>
+            <th>Data</th>
+            <th class="data-table__number">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of receitas(); track item.id) {
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td>{{ item.descricao }}</td>
+              <td>{{ formatDate(item.data) }}</td>
+              <td class="data-table__number">
+                {{ formatCurrency(item.valor) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

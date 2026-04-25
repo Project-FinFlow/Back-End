@@ -1,0 +1,54 @@
+<section class="module-page">
+  <span class="module-page__eyebrow">Organizacao</span>
+  <h2>Categorias</h2>
+  <p>
+    As categorias cadastradas pelo backend aparecem aqui para voce conferir os
+    tipos usados nas movimentacoes.
+  </p>
+
+  <div class="page-actions">
+    <button class="action-button" type="button" (click)="recarregar()">
+      Atualizar dados
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Registros encontrados</span>
+      <strong>{{ categorias().length }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Tipos distintos</span>
+      <strong>{{ tipos() }}</strong>
+    </article>
+  </div>
+
+  @if (carregando()) {
+    <div class="status-card">Carregando categorias da API...</div>
+  } @else if (erro()) {
+    <div class="status-card status-card--error">{{ erro() }}</div>
+  } @else if (!categorias().length) {
+    <div class="status-card">Nenhuma categoria foi cadastrada ainda.</div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of categorias(); track item.id) {
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td>{{ item.nome }}</td>
+              <td><span class="badge">{{ item.tipo }}</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
