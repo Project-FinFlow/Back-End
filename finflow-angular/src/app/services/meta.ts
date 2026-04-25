@@ -6,8 +6,6 @@ export interface MetaItem {
   id: number;
   descricao: string;
   valorObjetivo: number;
-  valorAtual: number;
-  usuarioId?: number;
 }
 
 @Injectable({

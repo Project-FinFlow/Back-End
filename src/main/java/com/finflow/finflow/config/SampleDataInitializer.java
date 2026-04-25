@@ -3,8 +3,6 @@ package com.finflow.finflow.config;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -36,53 +34,147 @@ public class SampleDataInitializer {
             MetaRepository metaRepository,
             LogSistemaRepository logSistemaRepository) {
         return args -> {
-            Map<String, Usuario> usuarios = garantirUsuarios(usuarioRepository);
-            Map<String, Categoria> categorias = garantirCategorias(categoriaRepository, usuarios);
+            Usuario guilherme = garantirUsuario(
+                    usuarioRepository,
+                    "Guilherme",
+                    "gui@email.com",
+                    "123456");
+            Usuario esperanca = garantirUsuario(
+                    usuarioRepository,
+                    "Esperanca",
+                    "HopeX@email.com",
+                    "12345");
+            Usuario maria = garantirUsuario(
+                    usuarioRepository,
+                    "Maria",
+                    "maria@email.com",
+                    "abc123");
 
-            garantirDespesas(despesaRepository, usuarios, categorias);
-            garantirReceitas(receitaRepository, usuarios, categorias);
-            garantirMetas(metaRepository, usuarios);
-            garantirLogs(logSistemaRepository, usuarios, categorias);
+            Categoria alimentacao = garantirCategoria(
+                    categoriaRepository,
+                    "Alimentacao",
+                    TipoCategoria.DESPESA,
+                    guilherme);
+            Categoria transporte = garantirCategoria(
+                    categoriaRepository,
+                    "Transporte",
+                    TipoCategoria.DESPESA,
+                    guilherme);
+            Categoria moradia = garantirCategoria(
+                    categoriaRepository,
+                    "Moradia",
+                    TipoCategoria.DESPESA,
+                    esperanca);
+            Categoria salario = garantirCategoria(
+                    categoriaRepository,
+                    "Salario",
+                    TipoCategoria.RECEITA,
+                    guilherme);
+            Categoria freelance = garantirCategoria(
+                    categoriaRepository,
+                    "Freelance",
+                    TipoCategoria.RECEITA,
+                    maria);
+
+            garantirDespesa(
+                    despesaRepository,
+                    "Compra no mercado",
+                    "50.00",
+                    LocalDate.of(2026, 4, 24),
+                    guilherme,
+                    alimentacao);
+            garantirDespesa(
+                    despesaRepository,
+                    "Gasolina do carro",
+                    "120.00",
+                    LocalDate.of(2026, 4, 25),
+                    guilherme,
+                    transporte);
+            garantirDespesa(
+                    despesaRepository,
+                    "Conta de luz",
+                    "230.00",
+                    LocalDate.of(2026, 4, 26),
+                    esperanca,
+                    moradia);
+
+            garantirReceita(
+                    receitaRepository,
+                    "Salario",
+                    "5000.00",
+                    LocalDate.of(2026, 4, 24),
+                    guilherme,
+                    salario);
+            garantirReceita(
+                    receitaRepository,
+                    "Projeto freelance",
+                    "1800.00",
+                    LocalDate.of(2026, 4, 26),
+                    esperanca,
+                    freelance);
+            garantirReceita(
+                    receitaRepository,
+                    "Venda online",
+                    "650.00",
+                    LocalDate.of(2026, 4, 27),
+                    maria,
+                    freelance);
+
+            garantirMeta(
+                    metaRepository,
+                    "Guardar dinheiro",
+                    1000.00,
+                    100.00,
+                    guilherme);
+            garantirMeta(
+                    metaRepository,
+                    "Viagem de fim de ano",
+                    3500.00,
+                    900.00,
+                    esperanca);
+            garantirMeta(
+                    metaRepository,
+                    "Reserva de emergencia",
+                    5000.00,
+                    1200.00,
+                    maria);
+
+            garantirLog(
+                    logSistemaRepository,
+                    "CREATE",
+                    "usuario",
+                    guilherme.getId(),
+                    "Usuarios de exemplo cadastrados",
+                    guilherme,
+                    LocalDateTime.of(2026, 4, 24, 9, 0));
+            garantirLog(
+                    logSistemaRepository,
+                    "CREATE",
+                    "categoria",
+                    alimentacao.getId(),
+                    "Categorias iniciais de exemplo criadas",
+                    guilherme,
+                    LocalDateTime.of(2026, 4, 24, 9, 10));
+            garantirLog(
+                    logSistemaRepository,
+                    "CREATE",
+                    "movimentacao",
+                    1L,
+                    "Despesas, receitas e metas de exemplo carregadas",
+                    esperanca,
+                    LocalDateTime.of(2026, 4, 24, 9, 20));
         };
     }
 
-    private Map<String, Usuario> garantirUsuarios(UsuarioRepository repository) {
-        Map<String, Usuario> usuariosPorEmail = new LinkedHashMap<>();
-
-        for (Usuario usuario : repository.findAll()) {
-            usuariosPorEmail.put(usuario.getEmail(), usuario);
-        }
-
-        criarUsuarioSeAusente(
-                repository,
-                usuariosPorEmail,
-                "gui@email.com",
-                "Guilherme",
-                "123456");
-        criarUsuarioSeAusente(
-                repository,
-                usuariosPorEmail,
-                "HopeX@email.com",
-                "Esperanca",
-                "12345");
-        criarUsuarioSeAusente(
-                repository,
-                usuariosPorEmail,
-                "maria@email.com",
-                "Maria",
-                "abc123");
-
-        return usuariosPorEmail;
-    }
-
-    private void criarUsuarioSeAusente(
+    private Usuario garantirUsuario(
             UsuarioRepository repository,
-            Map<String, Usuario> usuariosPorEmail,
-            String email,
             String nome,
+            String email,
             String senha) {
-        if (usuariosPorEmail.containsKey(email)) {
-            return;
+        Usuario existente = repository.findByEmail(email);
+
+        if (existente != null) {
+            return existente;
         }
 
         Usuario usuario = new Usuario();
@@ -90,61 +182,18 @@ public class SampleDataInitializer {
         usuario.setEmail(email);
         usuario.setSenha(senha);
 
-        Usuario salvo = repository.save(usuario);
-        usuariosPorEmail.put(email, salvo);
+        return repository.save(usuario);
     }
 
-    private Map<String, Categoria> garantirCategorias(
+    private Categoria garantirCategoria(
             CategoriaRepository repository,
-            Map<String, Usuario> usuarios) {
-        Map<String, Categoria> categoriasPorNome = new LinkedHashMap<>();
-
-        for (Categoria categoria : repository.findAll()) {
-            categoriasPorNome.put(categoria.getNome(), categoria);
-        }
-
-        criarCategoriaSeAusente(
-                repository,
-                categoriasPorNome,
-                "Alimentacao",
-                TipoCategoria.DESPESA,
-                usuarios.get("gui@email.com"));
-        criarCategoriaSeAusente(
-                repository,
-                categoriasPorNome,
-                "Transporte",
-                TipoCategoria.DESPESA,
-                usuarios.get("gui@email.com"));
-        criarCategoriaSeAusente(
-                repository,
-                categoriasPorNome,
-                "Moradia",
-                TipoCategoria.DESPESA,
-                usuarios.get("HopeX@email.com"));
-        criarCategoriaSeAusente(
-                repository,
-                categoriasPorNome,
-                "Salario",
-                TipoCategoria.RECEITA,
-                usuarios.get("gui@email.com"));
-        criarCategoriaSeAusente(
-                repository,
-                categoriasPorNome,
-                "Freelance",
-                TipoCategoria.RECEITA,
-                usuarios.get("maria@email.com"));
-
-        return categoriasPorNome;
-    }
-
-    private void criarCategoriaSeAusente(
-            CategoriaRepository repository,
-            Map<String, Categoria> categoriasPorNome,
             String nome,
             TipoCategoria tipo,
             Usuario usuario) {
-        if (categoriasPorNome.containsKey(nome)) {
-            return;
+        Categoria existente = repository.findByNome(nome);
+
+        if (existente != null) {
+            return existente;
         }
 
         Categoria categoria = new Categoria();
@@ -152,55 +201,17 @@ public class SampleDataInitializer {
         categoria.setTipo(tipo);
         categoria.setUsuario(usuario);
 
-        Categoria salva = repository.save(categoria);
-        categoriasPorNome.put(nome, salva);
+        return repository.save(categoria);
     }
 
-    private void garantirDespesas(
+    private void garantirDespesa(
             DespesaRepository repository,
-            Map<String, Usuario> usuarios,
-            Map<String, Categoria> categorias) {
-        Map<String, Despesa> despesasPorDescricao = new LinkedHashMap<>();
-
-        for (Despesa despesa : repository.findAll()) {
-            despesasPorDescricao.put(despesa.getDescricao(), despesa);
-        }
-
-        criarDespesaSeAusente(
-                repository,
-                despesasPorDescricao,
-                "Compra no mercado",
-                "50.00",
-                LocalDate.of(2026, 4, 24),
-                usuarios.get("gui@email.com"),
-                categorias.get("Alimentacao"));
-        criarDespesaSeAusente(
-                repository,
-                despesasPorDescricao,
-                "Gasolina do carro",
-                "120.00",
-                LocalDate.of(2026, 4, 25),
-                usuarios.get("gui@email.com"),
-                categorias.get("Transporte"));
-        criarDespesaSeAusente(
-                repository,
-                despesasPorDescricao,
-                "Conta de luz",
-                "230.00",
-                LocalDate.of(2026, 4, 26),
-                usuarios.get("HopeX@email.com"),
-                categorias.get("Moradia"));
-    }
-
-    private void criarDespesaSeAusente(
-            DespesaRepository repository,
-            Map<String, Despesa> despesasPorDescricao,
             String descricao,
             String valor,
             LocalDate data,
             Usuario usuario,
             Categoria categoria) {
-        if (despesasPorDescricao.containsKey(descricao)) {
+        if (repository.existsByDescricao(descricao)) {
             return;
         }
 
@@ -211,55 +222,17 @@ public class SampleDataInitializer {
         despesa.setUsuario(usuario);
         despesa.setCategoria(categoria);
 
-        Despesa salva = repository.save(despesa);
-        despesasPorDescricao.put(descricao, salva);
+        repository.save(despesa);
     }
 
-    private void garantirReceitas(
+    private void garantirReceita(
             ReceitaRepository repository,
-            Map<String, Usuario> usuarios,
-            Map<String, Categoria> categorias) {
-        Map<String, Receita> receitasPorDescricao = new LinkedHashMap<>();
-
-        for (Receita receita : repository.findAll()) {
-            receitasPorDescricao.put(receita.getDescricao(), receita);
-        }
-
-        criarReceitaSeAusente(
-                repository,
-                receitasPorDescricao,
-                "Salario",
-                "5000.00",
-                LocalDate.of(2026, 4, 24),
-                usuarios.get("gui@email.com"),
-                categorias.get("Salario"));
-        criarReceitaSeAusente(
-                repository,
-                receitasPorDescricao,
-                "Projeto freelance",
-                "1800.00",
-                LocalDate.of(2026, 4, 26),
-                usuarios.get("HopeX@email.com"),
-                categorias.get("Freelance"));
-        criarReceitaSeAusente(
-                repository,
-                receitasPorDescricao,
-                "Venda online",
-                "650.00",
-                LocalDate.of(2026, 4, 27),
-                usuarios.get("maria@email.com"),
-                categorias.get("Freelance"));
-    }
-
-    private void criarReceitaSeAusente(
-            ReceitaRepository repository,
-            Map<String, Receita> receitasPorDescricao,
             String descricao,
             String valor,
             LocalDate data,
             Usuario usuario,
             Categoria categoria) {
-        if (receitasPorDescricao.containsKey(descricao)) {
+        if (repository.existsByDescricao(descricao)) {
             return;
         }
 
@@ -270,50 +243,16 @@ public class SampleDataInitializer {
         receita.setUsuario(usuario);
         receita.setCategoria(categoria);
 
-        Receita salva = repository.save(receita);
-        receitasPorDescricao.put(descricao, salva);
+        repository.save(receita);
     }
 
-    private void garantirMetas(
+    private void garantirMeta(
             MetaRepository repository,
-            Map<String, Usuario> usuarios) {
-        Map<String, Meta> metasPorDescricao = new LinkedHashMap<>();
-
-        for (Meta meta : repository.findAll()) {
-            metasPorDescricao.put(meta.getDescricao(), meta);
-        }
-
-        criarMetaSeAusente(
-                repository,
-                metasPorDescricao,
-                "Guardar dinheiro",
-                1000.00,
-                100.00,
-                usuarios.get("gui@email.com"));
-        criarMetaSeAusente(
-                repository,
-                metasPorDescricao,
-                "Viagem de fim de ano",
-                3500.00,
-                900.00,
-                usuarios.get("HopeX@email.com"));
-        criarMetaSeAusente(
-                repository,
-                metasPorDescricao,
-                "Reserva de emergencia",
-                5000.00,
-                1200.00,
-                usuarios.get("maria@email.com"));
-    }
-
-    private void criarMetaSeAusente(
-            MetaRepository repository,
-            Map<String, Meta> metasPorDescricao,
             String descricao,
             Double valorObjetivo,
             Double valorAtual,
             Usuario usuario) {
-        if (metasPorDescricao.containsKey(descricao)) {
+        if (repository.existsByDescricao(descricao)) {
             return;
         }
 
@@ -323,59 +262,18 @@ public class SampleDataInitializer {
         meta.setValorAtual(valorAtual);
         meta.setUsuario(usuario);
 
-        Meta salva = repository.save(meta);
-        metasPorDescricao.put(descricao, salva);
+        repository.save(meta);
     }
 
-    private void garantirLogs(
+    private void garantirLog(
             LogSistemaRepository repository,
-            Map<String, Usuario> usuarios,
-            Map<String, Categoria> categorias) {
-        Map<String, LogSistema> logsPorDescricao = new LinkedHashMap<>();
-
-        for (LogSistema log : repository.findAll()) {
-            logsPorDescricao.put(log.getDescricao(), log);
-        }
-
-        criarLogSeAusente(
-                repository,
-                logsPorDescricao,
-                "CREATE",
-                "usuario",
-                usuarios.get("gui@email.com").getId(),
-                "Usuarios de exemplo cadastrados",
-                usuarios.get("gui@email.com"),
-                LocalDateTime.of(2026, 4, 24, 9, 0));
-        criarLogSeAusente(
-                repository,
-                logsPorDescricao,
-                "CREATE",
-                "categoria",
-                categorias.get("Alimentacao").getId(),
-                "Categorias iniciais de exemplo criadas",
-                usuarios.get("gui@email.com"),
-                LocalDateTime.of(2026, 4, 24, 9, 10));
-        criarLogSeAusente(
-                repository,
-                logsPorDescricao,
-                "CREATE",
-                "movimentacao",
-                1L,
-                "Despesas, receitas e metas de exemplo carregadas",
-                usuarios.get("HopeX@email.com"),
-                LocalDateTime.of(2026, 4, 24, 9, 20));
-    }
-
-    private void criarLogSeAusente(
-            LogSistemaRepository repository,
-            Map<String, LogSistema> logsPorDescricao,
             String acao,
             String tabela,
             Long registroId,
             String descricao,
             Usuario usuario,
             LocalDateTime dataHora) {
-        if (logsPorDescricao.containsKey(descricao)) {
+        if (repository.existsByDescricao(descricao)) {
             return;
         }
 
@@ -387,7 +285,6 @@ public class SampleDataInitializer {
         log.setUsuario(usuario);
         log.setDataHora(dataHora);
 
-        LogSistema salvo = repository.save(log);
-        logsPorDescricao.put(descricao, salvo);
+        repository.save(log);
     }
 }
