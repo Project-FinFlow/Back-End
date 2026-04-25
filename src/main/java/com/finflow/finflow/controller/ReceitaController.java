@@ -10,8 +10,9 @@ import com.finflow.finflow.services.ReceitaService;
 import com.finflow.finflow.dto.ReceitaRequest;
 import com.finflow.finflow.dto.ReceitaResponse;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/receitas")
+@RequestMapping("/api/receitas")
 public class ReceitaController {
 
     private final ReceitaService service;

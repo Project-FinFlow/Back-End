@@ -6,8 +6,9 @@ import java.util.List;
 import com.finflow.finflow.model.Usuario;
 import com.finflow.finflow.repository.UsuarioRepository;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
 
     private final UsuarioRepository repository;

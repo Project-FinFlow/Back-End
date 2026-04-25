@@ -10,8 +10,9 @@ import com.finflow.finflow.services.MetaService;
 import com.finflow.finflow.dto.MetaRequest;
 import com.finflow.finflow.dto.MetaResponse;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/metas")
+@RequestMapping("/api/metas")
 public class MetaController {
 
     private final MetaService service;

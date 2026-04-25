@@ -1,0 +1,7 @@
+.git
+.vscode
+target
+finflow-angular/node_modules
+finflow-angular/dist
+finflow-angular/.angular
+finflow-angular/.vscode

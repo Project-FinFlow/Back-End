@@ -12,8 +12,9 @@ import com.finflow.finflow.dto.DespesaResponse;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/despesas")
+@RequestMapping("/api/despesas")
 public class DespesaController {
 
     private final DespesaService service;

@@ -10,8 +10,9 @@ import com.finflow.finflow.services.CategoriaService;
 import com.finflow.finflow.dto.CategoriaRequest;
 import com.finflow.finflow.dto.CategoriaResponse;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/categorias")
+@RequestMapping("/api/categorias")
 public class CategoriaController {
 
     private final CategoriaService service;
