@@ -8,7 +8,9 @@ import com.finflow.finflow.dto.CategoriaRequest;
 import com.finflow.finflow.dto.CategoriaResponse;
 import com.finflow.finflow.model.Categoria;
 import com.finflow.finflow.model.TipoCategoria;
+import com.finflow.finflow.model.Usuario;
 import com.finflow.finflow.repository.CategoriaRepository;
+import com.finflow.finflow.repository.UsuarioRepository;
 import com.finflow.finflow.mapper.CategoriaMapper;
 
 /**
@@ -33,9 +35,13 @@ import com.finflow.finflow.mapper.CategoriaMapper;
 public class CategoriaService {
 
     private final CategoriaRepository repository;
+    private final UsuarioRepository usuarioRepository;
 
-    public CategoriaService(CategoriaRepository repository) {
+    public CategoriaService(
+            CategoriaRepository repository,
+            UsuarioRepository usuarioRepository) {
         this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
     }
     
      /**
@@ -43,6 +49,7 @@ public class CategoriaService {
      */
     public CategoriaResponse criar(CategoriaRequest request) {
         Categoria categoria = CategoriaMapper.toEntity(request);
+        preencherRelacionamentos(categoria, request);
         return CategoriaMapper.toResponse(repository.save(categoria));
     }
 
@@ -76,6 +83,7 @@ public class CategoriaService {
         categoria.setTipo(
             TipoCategoria.valueOf(request.getTipo().toUpperCase())
         );
+        preencherRelacionamentos(categoria, request);
 
         return CategoriaMapper.toResponse(repository.save(categoria));
     }
@@ -85,5 +93,16 @@ public class CategoriaService {
      */
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    private void preencherRelacionamentos(Categoria categoria, CategoriaRequest request) {
+        Usuario usuario = null;
+
+        if (request.getUsuarioId() != null) {
+            usuario = usuarioRepository.findById(request.getUsuarioId())
+                    .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
+        }
+
+        categoria.setUsuario(usuario);
     }
 }

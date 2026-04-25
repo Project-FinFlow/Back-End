@@ -10,4 +10,6 @@ public class ReceitaResponse {
     private BigDecimal valor;
     private String descricao;
     private LocalDate data;
+    private Long usuarioId;
+    private Long categoriaId;
 }

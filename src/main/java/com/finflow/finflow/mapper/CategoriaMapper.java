@@ -23,6 +23,9 @@ public class CategoriaMapper {
         response.setId(categoria.getId());
         response.setNome(categoria.getNome());
         response.setTipo(categoria.getTipo().name());
+        response.setUsuarioId(
+            categoria.getUsuario() != null ? categoria.getUsuario().getId() : null
+        );
         return response;
     }
 }

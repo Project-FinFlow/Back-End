@@ -10,6 +10,7 @@ public class MetaMapper {
         Meta meta = new Meta();
         meta.setDescricao(request.getDescricao());
         meta.setValorObjetivo(request.getValorObjetivo());
+        meta.setValorAtual(request.getValorAtual());
         return meta;
     }
 
@@ -18,6 +19,10 @@ public class MetaMapper {
         response.setId(meta.getId());
         response.setDescricao(meta.getDescricao());
         response.setValorObjetivo(meta.getValorObjetivo());
+        response.setValorAtual(meta.getValorAtual());
+        response.setUsuarioId(
+            meta.getUsuario() != null ? meta.getUsuario().getId() : null
+        );
         return response;
     }
 }

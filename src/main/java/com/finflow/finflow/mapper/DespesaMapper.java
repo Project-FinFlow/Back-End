@@ -20,6 +20,12 @@ public class DespesaMapper {
         response.setDescricao(despesa.getDescricao());
         response.setValor(despesa.getValor());
         response.setData(despesa.getData());
+        response.setUsuarioId(
+            despesa.getUsuario() != null ? despesa.getUsuario().getId() : null
+        );
+        response.setCategoriaId(
+            despesa.getCategoria() != null ? despesa.getCategoria().getId() : null
+        );
         return response;
     }
 }

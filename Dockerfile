@@ -15,8 +15,7 @@ WORKDIR /workspace
 COPY . .
 COPY --from=frontend-build /frontend/dist/finflow-angular/browser/ ./src/main/resources/static/
 
-RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre
 

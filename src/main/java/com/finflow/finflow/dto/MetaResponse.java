@@ -5,6 +5,8 @@ public class MetaResponse {
     private Long id;
     private String descricao;
     private Double valorObjetivo;
+    private Double valorAtual;
+    private Long usuarioId;
 
     // GETTERS
 
@@ -20,6 +22,14 @@ public class MetaResponse {
         return valorObjetivo;
     }
 
+    public Double getValorAtual() {
+        return valorAtual;
+    }
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
     // SETTERS
 
     public void setId(Long id) {
@@ -32,5 +42,13 @@ public class MetaResponse {
 
     public void setValorObjetivo(Double valorObjetivo) {
         this.valorObjetivo = valorObjetivo;
+    }
+
+    public void setValorAtual(Double valorAtual) {
+        this.valorAtual = valorAtual;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 }

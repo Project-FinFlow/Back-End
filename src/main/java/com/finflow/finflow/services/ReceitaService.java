@@ -6,8 +6,12 @@ import java.util.stream.Collectors;
 
 import com.finflow.finflow.dto.ReceitaRequest;
 import com.finflow.finflow.dto.ReceitaResponse;
+import com.finflow.finflow.model.Categoria;
 import com.finflow.finflow.model.Receita;
+import com.finflow.finflow.model.Usuario;
+import com.finflow.finflow.repository.CategoriaRepository;
 import com.finflow.finflow.repository.ReceitaRepository;
+import com.finflow.finflow.repository.UsuarioRepository;
 import com.finflow.finflow.mapper.ReceitaMapper;
 
 /**
@@ -28,10 +32,18 @@ public class ReceitaService {
 
     private final ReceitaRepository repository;
     private final LogSistemaService logService;
+    private final UsuarioRepository usuarioRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public ReceitaService(ReceitaRepository repository, LogSistemaService logService) {
+    public ReceitaService(
+            ReceitaRepository repository,
+            LogSistemaService logService,
+            UsuarioRepository usuarioRepository,
+            CategoriaRepository categoriaRepository) {
         this.repository = repository;
         this.logService = logService;
+        this.usuarioRepository = usuarioRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     /**
@@ -39,6 +51,7 @@ public class ReceitaService {
      */
     public ReceitaResponse criar(ReceitaRequest request) {
         Receita receita = ReceitaMapper.toEntity(request);
+        preencherRelacionamentos(receita, request);
         Receita salvo = repository.save(receita);
 
         logService.registrar("RECEITA CRIADA");
@@ -78,6 +91,7 @@ public class ReceitaService {
         receita.setDescricao(request.getDescricao());
         receita.setValor(request.getValor());
         receita.setData(request.getData());
+        preencherRelacionamentos(receita, request);
 
         Receita atualizado = repository.save(receita);
 
@@ -93,5 +107,23 @@ public class ReceitaService {
         repository.deleteById(id);
 
         logService.registrar("RECEITA DELETADA ID " + id);
+    }
+
+    private void preencherRelacionamentos(Receita receita, ReceitaRequest request) {
+        Usuario usuario = null;
+        Categoria categoria = null;
+
+        if (request.getUsuarioId() != null) {
+            usuario = usuarioRepository.findById(request.getUsuarioId())
+                    .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
+        }
+
+        if (request.getCategoriaId() != null) {
+            categoria = categoriaRepository.findById(request.getCategoriaId())
+                    .orElseThrow(() -> new RuntimeException("Categoria nao encontrada"));
+        }
+
+        receita.setUsuario(usuario);
+        receita.setCategoria(categoria);
     }
 }

@@ -20,6 +20,12 @@ public class ReceitaMapper {
         response.setDescricao(receita.getDescricao());
         response.setValor(receita.getValor());
         response.setData(receita.getData());
+        response.setUsuarioId(
+            receita.getUsuario() != null ? receita.getUsuario().getId() : null
+        );
+        response.setCategoriaId(
+            receita.getCategoria() != null ? receita.getCategoria().getId() : null
+        );
         return response;
     }
 }

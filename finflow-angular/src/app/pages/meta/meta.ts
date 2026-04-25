@@ -23,7 +23,24 @@ export class Meta {
       0
     )
   );
+  protected readonly valorAtualTotal = computed(() =>
+    this.metas().reduce(
+      (acumulado, item) => acumulado + Number(item.valorAtual ?? 0),
+      0
+    )
+  );
   protected readonly formatCurrency = formatCurrency;
+
+  protected percentualDaMeta(item: MetaItem): number {
+    const objetivo = Number(item.valorObjetivo ?? 0);
+    const atual = Number(item.valorAtual ?? 0);
+
+    if (!objetivo) {
+      return 0;
+    }
+
+    return Math.min(100, Math.round((atual / objetivo) * 100));
+  }
 
   constructor() {
     this.recarregar();
